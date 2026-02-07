@@ -1,175 +1,181 @@
-# 🏡 Airbnb Clone
+# 🏡 Airbnb Clone (Backend)
 
-A scalable backend system inspired by Airbnb, built using **Spring Boot**, **JPA/Hibernate**, and **PostgreSQL**.  
-This project focuses on clean domain modeling, explicit lifecycle management, and reliable booking foundations, reflecting how real-world hospitality platforms are designed.
+A scalable backend system inspired by Airbnb, built using **Spring Boot**, **JPA/Hibernate**, and **PostgreSQL**.
 
-The backend is being built incrementally with an emphasis on:
-- correctness over shortcuts
-- clear separation of lifecycle and availability
-- long-term maintainability and extensibility
+This project focuses on **clean domain modeling**, **explicit lifecycle management**, and **correct booking foundations**, reflecting how real-world hospitality platforms are designed.
+
+The backend is built incrementally with an emphasis on:
+
+* correctness over shortcuts
+* explicit lifecycle & availability modeling
+* long-term maintainability and extensibility
 
 ---
 
 ## 🎯 Project Vision
 
-The goal of this project is to model the core backend foundations of a short-term rental platform, including:
+The goal of this project is to model the **core backend foundations** of a short-term rental platform, including:
 
-- Property listings and metadata
-- Room-based inventory units
-- Reusable amenities and media assets
-- Date-based availability and pricing
-- Clear lifecycle control of listings and rooms
+* Property listings and metadata
+* Unit-based inventory modeling
+* Reusable amenities and media assets
+* Date-based availability and pricing
+* Explicit lifecycle and verification control
+* Safe booking and payment workflows
 
-Design decisions prioritize clarity, consistency, and real-world constraints over minimal implementations.
+Design decisions prioritize **clarity, correctness, and real-world constraints** over minimal or tutorial-style implementations.
 
 ---
 
 ## ✨ Key Capabilities
 
-- 🏨 Property (Hotel) management  
-- 🛏 Room-based inventory modeling  
-- 📍 Embedded address, location, and contact information  
-- 🏷 Reusable amenity catalog  
-- 🖼 Listing- and room-level photo management  
-- 📅 Per-day availability with date-specific pricing  
-- 🔁 Explicit lifecycle control using `isActive` flags  
+* 🏠 Property listing & verification lifecycle
+* 🛏 Unit-based inventory (rooms / apartments / identical units)
+* 📍 Embedded address, location, and contact information
+* 🏷 Reusable amenity catalog (property & unit level)
+* 🖼 Property- and unit-level photo management
+* 📅 Per-day availability with date-specific pricing
+* 🔒 Booking-safe availability modeling (no double booking)
+* 💳 Payment modeling with retries & refunds
+* 💬 Booking-scoped reviews for trust & authenticity
 
 ---
 
-## 🧠 Design Principles
+## 🧠 Core Design Principles
 
-- Normalize transactional data to ensure correctness  
-- Separate **lifecycle state** from **availability state**  
-- Embed value objects to reduce unnecessary joins  
-- Model availability explicitly to prevent double bookings  
-- Favor extensibility over premature optimization  
+* Separate **lifecycle state** from **availability state**
+* Model availability explicitly per date
+* Normalize transactional data for correctness
+* Embed value objects where appropriate
+* Avoid premature optimization
+* Favor explicit workflows over hidden behavior
 
 ---
 
 ## 🛠 Technology Stack
 
-- Java 25
-- Spring Boot
-- Spring Data JPA (Hibernate)
-- PostgreSQL
-- Maven
+* **Java 25 (LTS)**
+* Spring Boot
+* Spring Data JPA (Hibernate)
+* PostgreSQL
+* Maven
 
 ---
 
-## 📁 Project Structure
+## 📁 Project Structure (Feature-Based)
 
-    src/main/java/com/example/airbnb
-     ├── models          # Domain & JPA entities
-     ├── repositories    # Persistence layer
-     ├── services        # Business logic
-     ├── controllers     # REST APIs
-     ├── dtos            # API & internal DTOs
-     └── exceptions      # Domain exceptions & API error handling
+```
+com.example.airbnb
+├── auth
+├── user
+├── property
+├── unit
+├── availability
+├── booking
+├── guest
+├── review
+├── payment
+├── amenity
+├── common
+│   ├── exception
+│   ├── util
+│   └── security
+└── config
+```
+
+Each feature owns:
+
+* its entities
+* enums
+* repositories
+* services
+
+Cross-cutting concerns live in `common`.
 
 ---
 
 ## 🔁 Lifecycle vs Availability
 
-A clear distinction is maintained between **entity lifecycle** and **booking availability**.
+A **strict distinction** is maintained between lifecycle state and booking availability.
 
-### Lifecycle (`isActive`)
-- Controls whether an entity participates in the system
-- Applies at a coarse-grained level
+### Lifecycle (entity-level)
+
+Lifecycle controls whether an entity participates in the system.
 
 Examples:
-- `Hotel.isActive = false` → listing is hidden and not bookable
-- `Room.isActive = false` → room is removed from usable inventory
+
+* Property verification status (DRAFT → VERIFIED → REJECTED)
+* Listing status (PUBLISHED / UNLISTED)
+* Soft deletion via `deletedAt`
+
+Lifecycle state **does not represent bookings**.
+
+---
 
 ### Availability (date-based)
-- Controls whether a listing or room can be booked on a specific date
-- Managed through per-day availability records
 
-Availability does not deactivate entities, and lifecycle flags do not represent bookings.
+Availability controls whether a **unit** can be booked on a specific date.
+
+Availability is modeled **per unit per date**, supporting:
+
+* safe concurrent booking
+* date-specific pricing
+* blocked or closed dates
+
+Availability is the **single source of truth** for booking safety.
 
 ---
 
 ## 📅 Availability Model Overview
 
-Availability is modeled **per date**, rather than as date ranges.
+Availability is modeled **per calendar day**, not as date ranges.
 
 Each availability record answers:
-- Can this be booked on this date?
-- At what price?
-- Is it explicitly blocked?
 
-This design supports:
-- Prevention of double bookings
-- Date-specific pricing (including seasonal variation)
-- Safe concurrent access
+* Is this unit bookable on this date?
+* How many units are available?
+* Is the date closed?
+* Is pricing overridden?
 
-The availability calendar acts as the single source of truth for bookings.
+This design:
+
+* prevents double bookings
+* supports surge pricing
+* scales to hotels & homes
 
 ---
 
 ## 🔌 API & DTO Design
 
-The system clearly separates external API contracts from internal domain workflows.
+The system strictly separates **external API contracts** from **internal domain workflows**.
 
-## API DTOs
-- API DTOs define what clients are allowed to send and receive.
-- They are stable, validated, and independent of business rule enforcement.
-- Examples:
-    - Booking creation requests
-    - Guest add/update requests
-    - Read-only response models
+### API DTOs
 
-## Internal DTOs
-- Internal DTOs are used for communication between services and repositories.
-- They are stable, validated, and independent of business rule enforcement.
-- They represent intent-based domain operations and are used exclusively within the service layer.
-- Examples:
-    - Hotel read models
-    - Room read models
-    - Booking read models
-    - User read models
+* Define client-visible contracts
+* Validated at the API boundary
+* Stable and backward-compatible
 
-- They enable:
-    - Explicit business rule enforcement
-    - Clear workflow orchestration
-    - Safe evolution of domain logic without breaking APIs
+### Internal DTOs
 
+* Used for service-to-service communication
+* Represent intent-based operations
+* Allow safe evolution of domain logic
+
+---
 
 ## 🛑 Error Handling & API Contracts
 
-The system enforces business rules using **domain exceptions** and translates them into HTTP responses at the API boundary.
+Business rules are enforced using **domain exceptions** inside services.
 
-### Domain Exceptions
-Business rules are enforced inside the service layer using explicit domain exceptions.
+Exceptions express **what went wrong**, not how errors are exposed.
 
-These exceptions represent **what went wrong**, not how the error is exposed over HTTP.
+A centralized global exception handler:
 
-Examples include:
-- Booking not allowed due to lifecycle rules
-- Guest modification restrictions (e.g. within 24 hours of check-in)
-- Room availability conflicts
-- Unauthorized actions on bookings
-
-Domain exceptions are reusable across:
-- REST APIs
-- background jobs
-- future integrations
-
----
-
-### Global Exception Handling
-All domain exceptions are translated into HTTP responses using a centralized global exception handler.
-
-This ensures:
-- Consistent error response format
-- Clear, machine-readable error codes
-- No business logic inside controllers
-- Stable API behavior as rules evolve
-
----
+* maps domain errors to HTTP responses
+* ensures consistent error format
+* keeps controllers free of business logic
 
 ### Standard Error Response
-
-All API errors follow a uniform structure:
 
 ```json
 {
@@ -179,50 +185,50 @@ All API errors follow a uniform structure:
 }
 ```
 
+---
 
 ## 📊 Project Progress
 
 ### ✅ Completed
-- Core domain modeling (Hotel, Room, User)
-- Room-based inventory design (one room = one booking)
-- Explicit lifecycle handling using `isActive`
-- Embedded address, location, and contact information
-- Amenity catalog modeling
-- Listing- and room-level photo support
-- User model with roles and authentication-ready fields
-- Guest modeling (booking-scoped stay participants)
-- Gender enum for guest details
-- Payment schema design (booking-linked, retry/refund ready)
-- API DTO and internal command separation
-- Domain exception modeling with centralized error handling
-- Clear separation of lifecycle vs availability concerns
+
+* Core domain modeling (Property, Unit, Booking, User)
+* Unit-based inventory & availability design
+* Explicit lifecycle & verification modeling
+* Amenity catalog & media assets
+* Booking-safe availability model
+* Guest modeling (booking-scoped)
+* Review model (booking-verified reviews)
+* Payment model (retry & refund ready)
+* Domain exception framework
+* Feature-based package structure
 
 ### 🚧 In Progress
-- Booking workflow implementation (Option 1: single-room booking)
-- Availability locking and validation
-- Booking status transitions (confirm / cancel)
-- Payment → booking confirmation integration
+
+* Booking transaction workflow
+* Availability locking & validation
+* Booking status transitions
+* Payment → booking confirmation integration
 
 ### 🗺 Planned
-- Cancellation and refund flows
-- Availability caching 
-- Search and filtering 
-- Event-driven booking updates
-- Frontend integration
 
+* Cancellation & refund workflows
+* Availability caching
+* Search & filtering
+* Event-driven updates
+* Authentication & authorization (final phase)
+* Frontend integration
 
 ---
 
-## 🔮 Frontend (Planned)
+## 🔐 Authentication Strategy
 
-A frontend application will be added in a later phase of this project.
+Authentication and authorization are **intentionally implemented last**, after core domain logic stabilizes.
 
-The current focus is on building a robust and well-structured backend, ensuring:
-- correct domain modeling
-- explicit lifecycle management
-- stable availability and booking foundations
+This avoids premature coupling and allows:
 
-Once the backend stabilizes, a frontend (web or mobile) will be introduced to consume the APIs.
+* stable API design
+* cleaner role enforcement
+* safer security integration
 
 ---
 
@@ -230,32 +236,32 @@ Once the backend stabilizes, a frontend (web or mobile) will be introduced to co
 
 ### Prerequisites
 
-- Java 25  
-- Maven  
-- PostgreSQL
-- Spring Data JPA
+* Java 21
+* Maven
+* PostgreSQL
 
 ### Run Locally
 
-    git clone https://github.com/your-username/airbnb-backend.git
-    cd airbnb-backend
-    mvn spring-boot:run
+```bash
+mvn spring-boot:run
+```
 
-Database configuration can be updated in `application.properties`.
+Environment-specific configuration is handled via `.env` and Spring profiles.
 
 ---
 
 ## 📌 Project Scope
 
-This project is intended to:
-- Explore realistic backend design challenges
-- Practice clean ORM and schema modeling
-- Serve as a foundation for future extensions
+This project focuses on:
 
-It intentionally avoids UI concerns and focuses on backend correctness and structure.
+* realistic backend design challenges
+* clean ORM & schema modeling
+* correctness under concurrency
+
+UI concerns are intentionally out of scope.
 
 ---
 
 ## 📝 Notes
 
-This README is treated as a living document and will evolve alongside the system as new features and architectural components are added.
+This README is a living document and evolves alongside the system.
