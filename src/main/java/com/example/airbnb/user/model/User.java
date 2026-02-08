@@ -58,7 +58,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role = UserRole.GUEST;
+    private UserRole role = UserRole.USER;
 
     @Column(name = "last_login_at")
     private LocalDateTime lastLoginAt;
@@ -73,4 +73,38 @@ public class User {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    // Factory Methods
+
+    public static User createLocalUser(String fullName, String email, String password, String phone) {
+        User user = new User();
+        user.fullName = fullName;
+        user.email = email;
+        user.phone = phone;
+        user.password = password;
+        user.role = UserRole.USER;
+        user.emailVerified = false;
+        user.phoneverified = false;
+        return user;
+    }
+
+    public void markEmailVerified() {
+        this.emailVerified = true;
+    }
+
+    public void markPhoneVerified() {
+        this.phoneverified = true;
+    }
+
+    public void promoteToAdmin() {
+        this.role = UserRole.ADMIN;
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return this.deletedAt != null;
+    }
 }
