@@ -5,9 +5,12 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.example.airbnb.booking.model.Booking;
+import com.example.airbnb.guest.enums.GuestGender;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,7 +19,9 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -28,6 +33,7 @@ import lombok.Setter;
 )
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Guest {
 
     @Id
@@ -43,6 +49,10 @@ public class Guest {
 
     @Column(name = "age")
     private Integer age;
+
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "gender", nullable = false)
+    private GuestGender gender = GuestGender.OTHER;
 
     @Column(name = "is_primary", nullable = false)
     private Boolean primaryGuest = false;

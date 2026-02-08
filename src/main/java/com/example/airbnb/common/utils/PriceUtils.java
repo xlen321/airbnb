@@ -2,9 +2,11 @@ package com.example.airbnb.common.utils;
 
 import java.math.BigDecimal;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PriceUtils {
-    private PriceUtils() {
-    }
 
     public static BigDecimal sum(BigDecimal a, BigDecimal b) {
         return a.add(b);

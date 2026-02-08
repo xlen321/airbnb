@@ -2,18 +2,22 @@ package com.example.airbnb.property.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Embeddable
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PropertyContactInfo {
 
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
     
     @Column(name = "address_line_1", nullable = false)

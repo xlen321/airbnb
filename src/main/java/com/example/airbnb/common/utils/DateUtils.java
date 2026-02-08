@@ -4,9 +4,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class DateUtils {
-    private DateUtils() {
-    }
 
     public static List<LocalDate> getDatesBetween(LocalDate startInclusive, LocalDate endExclusive) {
         List<LocalDate> dates = new ArrayList<>();
