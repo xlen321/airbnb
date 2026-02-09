@@ -65,7 +65,8 @@ public class Unit {
     @JoinTable(
         name = "unit_amenities", 
         joinColumns = @JoinColumn(name = "unit_id"), 
-        inverseJoinColumns = @JoinColumn(name = "amenity_id"))
+        inverseJoinColumns = @JoinColumn(name = "amenity_id")
+    )
     private Set<Amenity> amenities = new HashSet<>();
 
     @CreationTimestamp
@@ -78,4 +79,39 @@ public class Unit {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public static Unit create(Property property, String name, int capacity, int totalCount) {
+        if (capacity <= 0)
+            throw new IllegalArgumentException("Capacity must be greater than zero");
+
+        if (totalCount <= 0)
+            throw new IllegalArgumentException("Total count must be greater then zero ");
+
+        Unit unit = new Unit();
+        unit.property = property;
+        unit.name = name;
+        unit.capacity = capacity;
+        unit.totalCount = totalCount;
+        return unit;
+    }
+
+    public void updateCapacity(int capacity) {
+        if (capacity <= 0)
+            throw new IllegalArgumentException("Capacity must be greater than zero");
+        this.capacity = capacity;
+    }
+
+    public void updateInventory(int totalCount) {
+        if (totalCount <= 0)
+            throw new IllegalArgumentException("Total count must be greater then zero ");
+        this.totalCount = totalCount;
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
 }

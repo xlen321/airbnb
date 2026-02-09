@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class UserMapper {
 
-    // API DTO -> Entity
     public static User toEntity(CreateUserRequest request) {
         return User.createLocalUser(
                 request.getFullName(),

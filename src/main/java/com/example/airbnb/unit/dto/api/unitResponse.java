@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class unitResponse {
+public class UnitResponse {
     private UUID id;
     private UUID propertyId;
 

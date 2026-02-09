@@ -39,7 +39,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-    name = "properties",
+    name = "properties", 
     indexes = {
         @Index(name = "idx_property_verification_status", columnList = "verification_status"),
         @Index(name = "idx_property_listing_status", columnList = "listing_status")
@@ -96,4 +96,53 @@ public class Property {
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    public static Property createDraft(String name, PropertyContactInfo contactInfo) {
+        Property property = new Property();
+        property.name = name;
+        property.contactInfo = contactInfo;
+        property.verificationStatus = PropertyVerificationStatus.DRAFT;
+        property.listingStatus = PropertyListingStatus.UNLISTED;
+        return property;
+    }
+
+    public void submitForVerification() {
+        if (verificationStatus != PropertyVerificationStatus.DRAFT)
+            throw new IllegalStateException("Property not in DRAFT state");
+        this.verificationStatus = PropertyVerificationStatus.UNDER_VERIFICATION;
+    }
+
+    public void verify() {
+        if (verificationStatus != PropertyVerificationStatus.UNDER_VERIFICATION)
+            throw new IllegalStateException("Property not in UNDER_VERIFICATION state");
+        this.verificationStatus = PropertyVerificationStatus.VERIFIED;
+    }
+
+    public void reject() {
+        if (verificationStatus != PropertyVerificationStatus.UNDER_VERIFICATION)
+            throw new IllegalStateException("Property not in UNDER_VERIFICATION state");
+        this.verificationStatus = PropertyVerificationStatus.REJECTED;
+    }
+
+    public void publish() {
+        if (verificationStatus != PropertyVerificationStatus.VERIFIED)
+            throw new IllegalStateException("Property not in VERIFIED state");
+        this.listingStatus = PropertyListingStatus.PUBLISHED;
+    }
+
+    public void unlist() {
+        this.listingStatus = PropertyListingStatus.UNLISTED;
+    }
+
+    public void suspend() {
+        this.listingStatus = PropertyListingStatus.SUSPENDED;
+    }
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return deletedAt != null;
+    }
 }

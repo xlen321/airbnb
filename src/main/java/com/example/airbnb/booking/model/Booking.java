@@ -80,4 +80,26 @@ public class Booking {
 
     @Column(name = "cancelled_at")
     private LocalDateTime cancelledAt;
+
+
+    public static Booking createPendingpayment(User user, Unit unit, LocalDate checkInDate, LocalDate checkOutDate, int guestCount, BigDecimal totalPrice) {
+        if(!checkOutDate.isAfter(checkInDate))
+            throw new IllegalArgumentException("Check-out must be after checl-in");
+
+        if(guestCount <= 0 || guestCount > unit.getCapacity())
+            throw new IllegalArgumentException("Invalid guest count");
+
+        if(totalPrice.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Total price must be greater than zero");
+
+        Booking booking = new Booking();
+        booking.user = user;
+        booking.unit = unit;
+        booking.chckInDate = checkInDate;
+        booking.checkOutDate = checkOutDate;
+        booking.guestCount = guestCount;
+        booking.totalPrice = totalPrice;
+        booking.status = BookingStatus.PENDING;
+        return booking;
+    }
 }
