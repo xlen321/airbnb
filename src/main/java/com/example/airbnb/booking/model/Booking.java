@@ -102,4 +102,22 @@ public class Booking {
         booking.status = BookingStatus.PENDING;
         return booking;
     }
+
+    public void confirmPayment() {
+        if(status != BookingStatus.PENDING)
+            throw new IllegalStateException("Booking is not pending payment");
+        this.status = BookingStatus.COMPLETED;
+    }
+
+    public void cancelByUser() {
+        if(status != BookingStatus.PENDING && status != BookingStatus.CONFIRMED)
+            throw new IllegalStateException("Booking cannot be cancelled");
+        this.status = BookingStatus.CANCELLED;
+    }
+
+    public void markCompleted() {
+        if(status != BookingStatus.CONFIRMED)
+            throw new IllegalStateException("Only confirmed bookings can be completed");
+        this.status = BookingStatus.COMPLETED;
+    }
 }
