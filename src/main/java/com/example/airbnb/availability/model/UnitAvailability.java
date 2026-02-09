@@ -23,7 +23,6 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "unit_availability", 
@@ -39,7 +38,6 @@ uniqueConstraints = {
     }
 )
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UnitAvailability {
     @Id
@@ -72,5 +70,59 @@ public class UnitAvailability {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public static UnitAvailability createOpen(Unit unit, LocalDate date, int totalCount) {
+        if(totalCount < 0)
+            throw new IllegalArgumentException("Available count cannot be negative");
+
+        UnitAvailability availability = new UnitAvailability();
+        availability.unit = unit;
+        availability.date = date;
+        availability.totalCount = totalCount;
+        availability.bookedCount = 0;
+        availability.closed = false;
+        return availability;
+    }
+
+    public int getAvailableCount() {
+        return totalCount - bookedCount;
+    }
+
+    public void reserve(int quantity) {
+        if(closed)
+            throw new IllegalStateException("Date is closed.");
+
+        if(quantity <= 0)
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+
+        if(bookedCount + quantity > totalCount)
+            throw new IllegalStateException("Insufficient Availability");
+
+        this.bookedCount += quantity;
+    }
+
+    public void release(int quantity) {
+        if(quantity <= 0)
+            throw new IllegalArgumentException("Quantity must be greater than zero.");
+
+        this.bookedCount -= quantity;
+
+        if(this.bookedCount < 0)
+            this.bookedCount = 0;
+    }
+
+    public void close() {
+        this.closed = true;
+    }
+
+    public void open() {
+        this.closed = false;
+    }
+
+    public void overrideprice(BigDecimal price) {
+        if(price == null || price.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Price must be greater than zero.");
+        this.priceOverride = price;
+    }
 
 }
