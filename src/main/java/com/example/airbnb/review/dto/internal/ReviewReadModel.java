@@ -9,10 +9,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReviewReadModel {
-    private UUID id;
+    private Long id;
     private UUID bookingId;
     private UUID propertyId;
-    private UUID unitId;
     private UUID authorUserId;
 
     private int rating;

@@ -11,10 +11,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ReviewResponse {
-    private UUID id;
+    private Long id;
     private int rating;
     private String comment;
-
     private UUID authorUserId;
     private LocalDateTime createdAt;
 }

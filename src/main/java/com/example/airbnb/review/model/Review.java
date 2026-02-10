@@ -23,7 +23,6 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(
@@ -37,7 +36,6 @@ import lombok.Setter;
     }
 )
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
     @Id
@@ -59,6 +57,9 @@ public class Review {
     @Column(nullable = false)
     private Integer rating;
 
+    @Column(nullable = false)
+    private String comment;
+
     @Column(name = "is_public", nullable = false)
     private Boolean isPublic = true;
 
@@ -69,4 +70,18 @@ public class Review {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public static Review create(
+        Booking booking,
+        User reviewer,
+        Integer rating,
+        String comment
+    ) {
+        Review review = new Review();
+        review.booking = booking;
+        review.reviewer = reviewer;
+        review.rating = rating;
+        review.comment = comment;
+        return review;
+    }
 }
