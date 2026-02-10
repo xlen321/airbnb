@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,15 +11,19 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Table(name = "amenities")
+@Table(
+    name = "amenities",
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_amenity_code", columnNames = "code")
+    }
+)
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Amenity {
     @Id
@@ -36,14 +39,24 @@ public class Amenity {
 
     private String description;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    public static Amenity create(
+            String code,
+            String name,
+            String description) {
+        if (code == null || code.isBlank())
+            throw new IllegalArgumentException("Amenity code cannot be empty");
+
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("Amenity name cannot be blank");
+
+        Amenity amenity = new Amenity();
+        amenity.code = code.trim().toUpperCase();
+        amenity.name = name.trim();
+        amenity.description = description;
+        return amenity;
+    }
 }
