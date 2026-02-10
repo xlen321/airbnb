@@ -2,8 +2,8 @@ package com.example.airbnb.common.exception;
 
 public class NotFoundException extends ApplicationException {
 
-    public NotFoundException(ApiErrorCode errorCode, String message) {
-        super(errorCode, message);
+    public NotFoundException(String message) {
+        super(ApiErrorCode.NOT_FOUND, message);
     }
 
 }

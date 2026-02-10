@@ -1,5 +1,7 @@
 package com.example.airbnb.common.exception;
 
+import org.springframework.http.HttpStatus;
+
 public class ApplicationException extends RuntimeException {
     private final ApiErrorCode errorCode;
 
@@ -10,5 +12,9 @@ public class ApplicationException extends RuntimeException {
 
     public ApiErrorCode getErrorCode() {
         return errorCode;
+    }
+
+    public HttpStatus geHttpStatus() {
+        return errorCode.getHttpStatus();
     }
 }

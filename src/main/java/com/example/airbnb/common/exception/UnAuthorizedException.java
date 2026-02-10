@@ -1,9 +1,9 @@
 package com.example.airbnb.common.exception;
 
-public class UnAuthorizedException extends ApplicationException {
+public class UnauthorizedException extends ApplicationException {
 
-    public UnAuthorizedException(ApiErrorCode errorCode, String message) {
-        super(errorCode, message);
+    public UnauthorizedException(String message) {
+        super(ApiErrorCode.UNAUTHORIZED, message);
     }
     
 }

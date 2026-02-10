@@ -1,4 +1,10 @@
 package com.example.airbnb.common.exception;
 
-public record ApiErrorResponse(ApiErrorCode code, String message) {
+import java.time.LocalDateTime;
+
+public record ApiErrorResponse(
+        String code,
+        String message,
+        LocalDateTime timestamp,
+        String path) {
 }
