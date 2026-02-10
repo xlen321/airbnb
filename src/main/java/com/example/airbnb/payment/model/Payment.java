@@ -82,4 +82,37 @@ public class Payment {
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+
+    public static Payment initiate(Booking booking, User user, BigDecimal amount, PaymentMethod method) {
+        if(amount.compareTo(BigDecimal.ZERO) <= 0)
+            throw new IllegalArgumentException("Payment amount must be greater than zero");
+        Payment payment = new Payment();
+        payment.booking = booking;
+        payment.user = user;
+        payment.amount = amount;
+        payment.paymentMethod = method;
+        payment.paymentStatus = PaymentStatus.INITIATED;
+        return payment;
+    }
+
+    public void markSuccessful(String providerReference) {
+        if(paymentStatus != PaymentStatus.INITIATED)
+            throw new IllegalStateException("Payment is not in the INITIATED state");
+        this.paymentStatus = PaymentStatus.SUCCESS;
+        this.providerReference = providerReference;
+    }
+
+    public void markFailed(String failureReason) {
+        if(paymentStatus != PaymentStatus.INITIATED)
+            throw new IllegalStateException("Payment is not in the INITIATED state");
+        this.paymentStatus = PaymentStatus.FAILED;
+        this.faliureReason = failureReason;
+    }
+
+    public void markRefunded() {
+        if(paymentStatus != PaymentStatus.SUCCESS)
+            throw new IllegalStateException("Only successful payments can be refunded");
+        this.paymentStatus = PaymentStatus.REFUNDED;
+    }
 }
