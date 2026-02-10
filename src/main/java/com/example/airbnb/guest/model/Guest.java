@@ -22,7 +22,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(
@@ -32,7 +31,6 @@ import lombok.Setter;
     }
 )
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Guest {
 
@@ -50,7 +48,7 @@ public class Guest {
     @Column(name = "age")
     private Integer age;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender", nullable = false)
     private GuestGender gender = GuestGender.OTHER;
 
@@ -60,4 +58,25 @@ public class Guest {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+
+    public static Guest create(
+            Booking booking,
+            String fullName,
+            Integer age,
+            GuestGender gender,
+            boolean primaryGuest) {
+        if (age <= 0)
+            throw new IllegalArgumentException("Age must be greater than zero.");
+
+        if (gender == null)
+            throw new IllegalArgumentException("Gender must be provided");
+
+        Guest guest = new Guest();
+        guest.booking = booking;
+        guest.fullName = fullName;
+        guest.age = age;
+        guest.gender = gender;
+        guest.primaryGuest = primaryGuest;
+        return guest;
+    }
 }

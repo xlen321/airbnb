@@ -1,6 +1,5 @@
 package com.example.airbnb.guest.dto.api;
 
-import java.util.UUID;
 
 import com.example.airbnb.guest.enums.GuestGender;
 
@@ -12,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class GuestResponse {
-    private UUID id;
+    private Long id;
     private String fullName;
     private GuestGender gender;
     private Integer age;
