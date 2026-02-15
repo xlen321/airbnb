@@ -41,14 +41,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserResponse getUserById(UUID id) {
-        User user = userRepository.findByIdAndIsActiveTrue(id)
+        User user = userRepository.findByIdAndDeletedAtNull(id)
                 .orElseThrow(() -> new NotFoundException("User not found."));
         return UserMapper.toresponse(user);
     }
 
     @Override
     public UserResponse updateProfile(UpdateUserRequest request, UUID id) {
-        User user = userRepository.findByIdAndIsActiveTrue(id)
+        User user = userRepository.findByIdAndDeletedAtNull(id)
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
         if (!user.getEmail().equalsIgnoreCase(request.getEmail())
@@ -70,7 +70,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deactivate(UUID id) {
-        User user = userRepository.findByIdAndIsActiveTrue(id)
+        User user = userRepository.findByIdAndDeletedAtNull(id)
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         user.setDeletedAt(LocalDateTime.now());
