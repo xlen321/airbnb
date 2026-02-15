@@ -26,9 +26,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse register(CreateUserRequest request) {
-        if (userRepository.exixtsByEmail(request.getEmail()))
+        if (userRepository.existsByEmail(request.getEmail()))
             throw new ConflictException("User with provided email already exixts.");
-        else if (userRepository.exixtsByPhone(request.getPhoneNumber()))
+        else if (userRepository.existsByPhone(request.getPhoneNumber()))
             throw new ConflictException("User with provided phone number already exixts.");
 
         User user = UserMapper.toEntity(request);
@@ -52,11 +52,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("User not found."));
 
         if (!user.getEmail().equalsIgnoreCase(request.getEmail())
-                && userRepository.exixtsByEmail(request.getEmail().toLowerCase()))
+                && userRepository.existsByEmail(request.getEmail().toLowerCase()))
             throw new ConflictException("Email already exists");
 
         if (!user.getPhone().equalsIgnoreCase(request.getPhoneNumber())
-                && userRepository.exixtsByPhone(request.getPhoneNumber()))
+                && userRepository.existsByPhone(request.getPhoneNumber()))
             throw new ConflictException("Phone number already exists");
 
         user.setFullName(request.getFullName());

@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.airbnb.user.model.User;
 
 public interface UserRepository extends JpaRepository<User, UUID> {
-    boolean exixtsByEmail(String email);
-    boolean exixtsByPhone(String phone);
+    boolean existsByEmail(String email);
+    boolean existsByPhone(String phone);
 
     Optional<User> findByEmail(String email);
     Optional<User> findByPhone(String phone);
