@@ -28,7 +28,8 @@ public class UserServiceImpl implements UserService {
     public UserResponse register(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail()))
             throw new ConflictException("User with provided email already exixts.");
-        else if (userRepository.existsByPhone(request.getPhoneNumber()))
+        
+        if (userRepository.existsByPhone(request.getPhoneNumber()))
             throw new ConflictException("User with provided phone number already exixts.");
 
         User user = UserMapper.toEntity(request);
