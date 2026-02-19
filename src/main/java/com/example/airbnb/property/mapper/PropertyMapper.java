@@ -1,6 +1,5 @@
 package com.example.airbnb.property.mapper;
 
-import com.example.airbnb.property.dto.api.CreatePropertyRequest;
 import com.example.airbnb.property.dto.api.PropertyContactInfoRequest;
 import com.example.airbnb.property.dto.api.PropertyResponse;
 import com.example.airbnb.property.dto.internal.PropertyReadModel;
