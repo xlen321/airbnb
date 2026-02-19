@@ -97,10 +97,11 @@ public class Property {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public static Property createDraft(String name, PropertyContactInfo contactInfo) {
+    public static Property createDraft(String name, PropertyContactInfo contactInfo, User hostId) {
         Property property = new Property();
         property.name = name;
         property.contactInfo = contactInfo;
+        property.host = hostId;
         property.verificationStatus = PropertyVerificationStatus.DRAFT;
         property.listingStatus = PropertyListingStatus.UNLISTED;
         return property;

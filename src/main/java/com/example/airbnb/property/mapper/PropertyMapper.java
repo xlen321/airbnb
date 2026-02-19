@@ -12,16 +12,11 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class PropertyMapper {
-    public static Property toEntity(CreatePropertyRequest request) {
-        return Property.createDraft(
-                request.getName(),
-                toContactInfo(request.getContactInfo()));
-    }
 
-    private static PropertyContactInfo toContactInfo(PropertyContactInfoRequest request) {
+    public static PropertyContactInfo toContactInfo(PropertyContactInfoRequest request) {
         PropertyContactInfo info = new PropertyContactInfo();
         info.setAddressLine1(request.getAddressLine1());
-        info.setAddressLine2(request.getAddressLine1());
+        info.setAddressLine2(request.getAddressLine2());
         info.setCity(request.getCity());
         info.setState(request.getState());
         info.setCountry(request.getCountry());
