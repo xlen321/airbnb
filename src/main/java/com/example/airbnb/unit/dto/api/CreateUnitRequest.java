@@ -1,6 +1,9 @@
 package com.example.airbnb.unit.dto.api;
 
+import java.math.BigDecimal;
 import java.util.UUID;
+
+import com.example.airbnb.unit.enums.UnitTypes;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -16,16 +19,22 @@ import lombok.Setter;
 public class CreateUnitRequest {
     @NotNull(message = "Property id is required")
     private UUID propertyId;
-    
+
     @NotBlank(message = "Name is required")
-    @Size(max = 100)
+    @Size(max = 100, message = "Name must be at most 100 characters")
     private String name;
-    
+
     @NotNull(message = "Capacity is required")
     @Min(value = 1, message = "Capacity must be at least 1")
     private int capacity;
-    
+
     @NotNull(message = "Total count is required")
     @Min(value = 1, message = "Total count must be at least 1")
     private int totalCount;
+
+    @NotNull(message = "Unit type is required")
+    private UnitTypes unitType;
+
+    @NotNull(message = "Price can not be empty")
+    private BigDecimal basePrice;
 }

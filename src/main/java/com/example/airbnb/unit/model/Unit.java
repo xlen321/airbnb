@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.example.airbnb.amenity.model.Amenity;
+import com.example.airbnb.common.exception.BusinessRuleViolationException;
 import com.example.airbnb.property.model.Property;
 import com.example.airbnb.unit.enums.UnitTypes;
 
@@ -62,11 +63,7 @@ public class Unit {
     private Integer totalCount;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "unit_amenities", 
-        joinColumns = @JoinColumn(name = "unit_id"), 
-        inverseJoinColumns = @JoinColumn(name = "amenity_id")
-    )
+    @JoinTable(name = "unit_amenities", joinColumns = @JoinColumn(name = "unit_id"), inverseJoinColumns = @JoinColumn(name = "amenity_id"))
     private Set<Amenity> amenities = new HashSet<>();
 
     @CreationTimestamp
@@ -80,18 +77,27 @@ public class Unit {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    public static Unit create(Property property, String name, int capacity, int totalCount) {
+    public static Unit create(Property property, String name, int capacity, int totalCount, UnitTypes unitType,
+            BigDecimal basePrice) {
+
+        if (property == null)
+            throw new BusinessRuleViolationException("Property is required");
         if (capacity <= 0)
-            throw new IllegalArgumentException("Capacity must be greater than zero");
+            throw new BusinessRuleViolationException("Capacity must be greater than zero");
 
         if (totalCount <= 0)
-            throw new IllegalArgumentException("Total count must be greater then zero ");
+            throw new BusinessRuleViolationException("Total count must be greater then zero ");
+
+        if (basePrice == null || basePrice.compareTo(BigDecimal.ZERO) <= 0)
+            throw new BusinessRuleViolationException("Base price must be greater than zero");
 
         Unit unit = new Unit();
         unit.property = property;
         unit.name = name;
         unit.capacity = capacity;
         unit.totalCount = totalCount;
+        unit.unitType = unitType;
+        unit.basePrice = basePrice;
         return unit;
     }
 

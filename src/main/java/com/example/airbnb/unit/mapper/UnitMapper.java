@@ -16,7 +16,9 @@ public class UnitMapper {
                 property,
                 request.getName(),
                 request.getCapacity(),
-                request.getTotalCount()
+                request.getTotalCount(),
+                request.getUnitType(),
+                request.getBasePrice()
             );
     }
 
