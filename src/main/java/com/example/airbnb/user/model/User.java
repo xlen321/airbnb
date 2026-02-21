@@ -74,8 +74,6 @@ public class User {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    // Factory Methods
-
     public static User createLocalUser(String fullName, String email, String password, String phone) {
         User user = new User();
         user.fullName = fullName;
