@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.app.airbnb.audit.AuditDetails;
+import com.app.airbnb.user.model.enums.Gender;
+import com.app.airbnb.user.model.enums.UserStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -107,6 +109,12 @@ public class User extends AuditDetails {
   )
   private String password;
 
+  @Enumerated(EnumType.STRING)
+  @Column(
+    name = "gender", 
+    nullable = false
+  )
+  private Gender gender;
   @Column(
     name = "profile_picture", 
     length = 500

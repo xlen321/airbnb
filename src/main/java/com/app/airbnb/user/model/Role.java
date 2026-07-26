@@ -1,6 +1,7 @@
 package com.app.airbnb.user.model;
 
 import com.app.airbnb.audit.AuditDetails;
+import com.app.airbnb.user.model.enums.RoleName;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
