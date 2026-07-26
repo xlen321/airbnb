@@ -3,6 +3,7 @@ package com.app.airbnb.user.dto.response;
 import java.time.LocalDate;
 import java.util.Set;
 
+import com.app.airbnb.user.model.enums.Role;
 import com.app.airbnb.user.model.enums.UserStatus;
 
 import lombok.Builder;
@@ -20,5 +21,5 @@ public class UserResponse {
   private String bio;
   private LocalDate dateOfBirth;
   private UserStatus status;
-  private Set<RoleResponse> roles;
+  private Set<Role> roles;
 }

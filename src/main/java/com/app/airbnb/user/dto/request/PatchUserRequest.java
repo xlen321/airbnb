@@ -2,23 +2,18 @@ package com.app.airbnb.user.dto.request;
 
 import java.time.LocalDate;
 
-import com.app.airbnb.user.model.enums.Gender;
-
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class CreateUserRequest {
-  @NotBlank(message = "First name is required")
+public class PatchUserRequest {
   @Size(
     min = 2, 
     max = 50, 
@@ -26,7 +21,6 @@ public class CreateUserRequest {
   )
   private String firstName;
 
-  @NotBlank(message = "Last name is required")
   @Size(
     min = 2, 
     max = 50, 
@@ -34,31 +28,14 @@ public class CreateUserRequest {
   )
   private String lastName;
 
-  @NotBlank(message = "Email is required")
-  @Email(message = "Invalid email address")
-  @Size(
-    max = 100, 
-    message = "Email cannot exceed 100 characters"
-  )
+  @Email(message = "Email should be valid")
+  @Size(max = 100)
   private String email;
 
-  @NotBlank(message = "Phone number is required")
   @Pattern(
-    regexp = "^\\+?[1-9]\\d{7,14}$",
-    message = "Invalid phone number"
-  )
+    regexp = "^\\+?[1-9]\\d{7,14}$", 
+    message = "Phone number must be a valid phone number")
   private String phone;
-
-  @NotNull(message = "Gender is required")
-  private Gender gender;
-
-  @NotBlank(message = "Password is required")
-  @Size(
-    min = 8, 
-    max = 64, 
-    message = "Password must be between 8 and 64 characters"
-  )
-  private String password;
 
   @Size(
     max = 500, 
@@ -73,6 +50,5 @@ public class CreateUserRequest {
   private String bio;
 
   @Past(message = "Date of birth must be in the past")
-  @NotNull(message = "Date of birth is required")
   private LocalDate dateOfBirth;
 }

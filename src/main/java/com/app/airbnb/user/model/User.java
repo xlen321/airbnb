@@ -6,9 +6,12 @@ import java.util.Set;
 
 import com.app.airbnb.audit.AuditDetails;
 import com.app.airbnb.user.model.enums.Gender;
+import com.app.airbnb.user.model.enums.Role;
 import com.app.airbnb.user.model.enums.UserStatus;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -130,12 +133,13 @@ public class User extends AuditDetails {
   @Column(name = "date_of_birth")
   private LocalDate dateOfBirth;
 
-  @ManyToMany(fetch = FetchType.LAZY)
-  @JoinTable(
-    name = "user_roles",
-    joinColumns = @JoinColumn(name = "user_id"),
-    inverseJoinColumns = @JoinColumn(name = "role_id")
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id")
   )
+  @Column(name = "roles")
+  @Enumerated(EnumType.STRING)
   @Builder.Default
   private Set<Role> roles = new HashSet<>();
 
