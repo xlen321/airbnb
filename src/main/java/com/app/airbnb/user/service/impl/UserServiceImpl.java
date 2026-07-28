@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     // check user with email & phone alreay exists
     validateEmail(request.getEmail());
-    validateEmail(request.getPhone());
+    validatePhone(request.getPhone());
 
     // map to entity
     User user = mapper.toEntity(request);
